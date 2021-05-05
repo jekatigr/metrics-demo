@@ -1,0 +1,21 @@
+body {
+    max-width: 1024px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    height: calc(100vh - 100px);
+}
+
+h1 {
+    margin-top: 30px;
+}
+
+button {
+    margin-right: 5px;
+    min-width: 50px;
+}
+
+button + a {
+    display: inline-block;
+    padding-left: 20px;
+}
