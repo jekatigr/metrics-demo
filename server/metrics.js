@@ -1,5 +1,7 @@
 const promClient = require('prom-client');
 
+/* Basic metrics */
+
 const counter = new promClient.Counter({
     name: 'demo_counter',
     help: 'Demo counter description',
@@ -16,8 +18,21 @@ const histogram = new promClient.Histogram({
     buckets: [100, 500, 1000],
 });
 
+/* End of basic metrics */
+
+/* Api requests metrics */
+
+const apiRequestsDurationHistogram = new promClient.Histogram({
+    name: 'api_request_duration_seconds',
+    help: 'Demo histogram of requests timings.',
+    labelNames: ['handler', 'code'],
+});
+
+/* End of api requests metrics */
+
 module.exports = {
     counter,
     gauge,
     histogram,
+    apiRequestsDurationHistogram
 };
