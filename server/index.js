@@ -3,7 +3,7 @@ const express = require('express');
 const metricsRouter = require('./metricsRouter');
 const apiRouter = require('./apiRouter');
 const metrics = require('./metrics');
-const { apiRequestsDurationHistogram } = metrics;
+const { apiRequestsDurationHistogram, githubRequestsDurationHistogram } = metrics;
 const getMiddlewares = require('./middleware');
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -24,7 +24,12 @@ app.prepare().then(() => {
     server.use('/metrics', metricsRouter);
 
     // Proceed other pages
-    server.all('*', (req, res) => handle(req, res));
+    server.all('*', (req, res) => {
+        // put metric in request object to allow nextjs context access to it
+        req.externalMetric = githubRequestsDurationHistogram;
+
+        return handle(req, res);
+    });
 
     server.listen(port, (err) => {
         if (err) {

@@ -23,9 +23,15 @@ const histogram = new promClient.Histogram({
 /* Api requests metrics */
 
 const apiRequestsDurationHistogram = new promClient.Histogram({
-    name: 'api_request_duration_seconds',
+    name: 'api_requests_duration_seconds',
     help: 'Demo histogram of requests timings.',
     labelNames: ['handler', 'code'],
+});
+
+const githubRequestsDurationHistogram = new promClient.Histogram({
+    name: 'github_requests_duration_seconds',
+    help: 'Github demo histogram of requests timings.',
+    labelNames: ['code'],
 });
 
 /* End of api requests metrics */
@@ -34,5 +40,6 @@ module.exports = {
     counter,
     gauge,
     histogram,
-    apiRequestsDurationHistogram
+    apiRequestsDurationHistogram,
+    githubRequestsDurationHistogram,
 };

@@ -13,13 +13,15 @@ const getMiddlewares = (histogram) => {
     /**
      * Middleware calls end callback for request metric.
      */
-    const stopMetric = (req, res) => {
+    const stopMetric = (req, res, next) => {
         const { stopTimer } = res.locals.metrics;
 
         stopTimer({
             code: res.statusCode,
             handler: req.originalUrl,
         });
+
+        next();
     };
 
     return {

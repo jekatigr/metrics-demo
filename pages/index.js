@@ -1,20 +1,17 @@
-import { useState } from 'react';
+import React from 'react';
 import createApi from './api';
 
 const api = createApi();
 
-const IndexPage = () =>  {
+const IndexPage = ({ repos: reposProps }) =>  {
     /*  ========================== Counter ============================== */
-    const [counterLoading, setCounterLoading] = useState(false);
-    const handleIncreaseCounter = async () => {
-        setCounterLoading(true);
-        await api.increaseCounter();
-        setCounterLoading(false);
+    const handleIncreaseCounter = () => {
+        api.increaseCounter();
     };
 
     const renderCounter = () => (
         <>
-            <h1>Counter {counterLoading ? 'loading...' : ''}</h1>
+            <h1>Counter</h1>
             <button onClick={handleIncreaseCounter}>+1</button>
             <a href="/metrics/counter" target="_blank">Show metrics →</a>
         </>
@@ -22,16 +19,13 @@ const IndexPage = () =>  {
 
     /*  ========================== Gauge ============================== */
 
-    const [gaugeLoading, setGaugeLoading] = useState(false);
-    const handleChangeGauge = (value) => async () => {
-        setGaugeLoading(true);
-        await api.changeGauge(value);
-        setGaugeLoading(false);
+    const handleChangeGauge = (value) => () => {
+        api.changeGauge(value);
     };
 
     const renderGauge = () => (
         <>
-            <h1>Gauge {gaugeLoading ? 'loading...' : ''}</h1>
+            <h1>Gauge</h1>
             <h3>Choose temperature:</h3>
             <button onClick={handleChangeGauge(-10)}>-10</button>
             <button onClick={handleChangeGauge(-5)}>-5</button>
@@ -44,16 +38,13 @@ const IndexPage = () =>  {
 
     /* ========================== Histogram ============================== */
 
-    const [histogramLoading, setHistogramLoading] = useState(false);
-    const handleCallHistogram = (timeout) => async () => {
-        setHistogramLoading(true);
-        await api.callHistogram(timeout);
-        setHistogramLoading(false);
+    const handleCallHistogram = (timeout) => () => {
+        api.callHistogram(timeout);
     };
 
     const renderHistogram = () => (
         <>
-            <h1>Histogram {histogramLoading ? 'loading...' : ''}</h1>
+            <h1>Histogram</h1>
             <h3>Choose delay in request (and send it):</h3>
             <button onClick={handleCallHistogram(300)}>300ms</button>
             <button onClick={handleCallHistogram(700)}>700ms</button>
@@ -62,22 +53,52 @@ const IndexPage = () =>  {
         </>
     );
 
+    /* ========================== SSR data example ============================== */
+
+    const [repos, setRepos] = React.useState(reposProps);
+
+    const updateRepos = async () => {
+        const res = await api.requestGithub();
+        setRepos(res);
+    };
+
+    const renderSSRReposInfo = () => (
+        <div>
+            <h1>Popular github repos</h1>
+            <ul>
+                {repos ? repos.map(r => (
+                    <li key={r.url}>{r.stars} stars, url: {r.url}</li>
+                )) : 'Github blocked me!'}
+            </ul>
+            <button onClick={updateRepos}>Update</button>
+            <a href="/metrics/github" target="_blank">Show metrics →</a>
+        </div>
+    );
+
     return (
         <div>
-            <a href="/metrics" target="_blank">All metrics →</a>
-            <br />
+            <a href="/metrics" target="_blank">All metrics →</a><br />
             {renderCounter()}
             {renderGauge()}
             {renderHistogram()}
+            <br /><br /><br />
+            <a href="/metrics/internal" target="_blank">Show internal api metrics →</a>
+            {renderSSRReposInfo()}
         </div>
     );
 }
 
 export async function getServerSideProps(context) {
-    const { req: { metrics } } = context; // metrics passed from express server handler
+    const { req: { externalMetric } } = context; // metrics passed from express server handler
+
+    const api = createApi(externalMetric);
+
+    const repos = await api.requestGithub();
 
     return {
-        props: {}, // will be passed to the page component as props
+        props: { // will be passed to the page component as props
+            repos: repos || null
+        },
     };
 }
 
