@@ -11,7 +11,7 @@ const apiRouter = express.Router();
 const timeout = async (ms) => new Promise(r => setTimeout(r, ms));
 
 apiRouter.post('/counter', async (req, res, next) => {
-    await timeout(500);
+    await timeout(300);
 
     counter.inc();
 

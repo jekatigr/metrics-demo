@@ -2,6 +2,12 @@
 
 Demo for meetup "How to add metrics in frontend project".
 
+Examples include:
+
+- Basic metrics
+- Measuring internal API requests
+- Measuring requests to external service
+
 Technologies:
 
 - React (NextJs),
@@ -32,3 +38,10 @@ yarn start
 ```
 
 Application will be available at: [http://localhost:3000](http://localhost:3000).
+
+# Prometheus and grafana
+
+Look for grafana dashboard source in file `grafana-dashboard.json`.
+
+Demo metrics will be published at: [http://localhost:3000/metrics](http://localhost:3000/metrics).
+You'll need to add this route in prometheus targets for scraping.

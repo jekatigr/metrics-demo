@@ -46,9 +46,11 @@ const IndexPage = ({ repos: reposProps }) =>  {
         <>
             <h1>Histogram</h1>
             <h3>Choose delay in request (and send it):</h3>
+            <button onClick={handleCallHistogram(50)}>50ms</button>
             <button onClick={handleCallHistogram(300)}>300ms</button>
             <button onClick={handleCallHistogram(700)}>700ms</button>
             <button onClick={handleCallHistogram(1000)}>1000ms</button>
+            <button onClick={handleCallHistogram(1500)}>1500ms</button>
             <a href="/metrics/histogram" target="_blank">Show metrics →</a>
         </>
     );
